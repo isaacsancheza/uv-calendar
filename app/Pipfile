@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+selenium = "*"
+pydantic = "*"
+pytz = "*"
+ics = "*"
+boto3 = "*"
+requests = "*"
+
+[dev-packages]
+mypy = "*"
+pytest = "*"
+autopep8 = "*"
+aws-cdk-lib = "*"
+boto3-stubs = {extras = ["s3"], version = "*"}
+
+[requires]
+python_version = "3.12"
