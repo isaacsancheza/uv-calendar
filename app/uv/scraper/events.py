@@ -1,5 +1,4 @@
-__all__ = ['get_events']
-
+import logging
 from re import compile
 from pytz import utc, timezone
 from locale import setlocale, LC_TIME
@@ -12,6 +11,8 @@ from selenium.webdriver.support.color import Color
 
 
 setlocale(LC_TIME, 'es_MX.UTF-8')
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('scraper')
 
 MONTH_NAMES = list(month_name)
 
@@ -21,8 +22,6 @@ RGX_BACKGROUND = compile(r'background: (?P<color>rgb\(\d+, \d+, \d+\))')
 
 
 def get_events(url: str) -> list:
-    print(url)
-
     options = ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
@@ -127,8 +126,12 @@ def get_events(url: str) -> list:
                         continue
                     day_number = int(day_number)
                     
-                    date = datetime(year=year, month=month_number, day=day_number, hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone('America/Mexico_City'))
-                    date = date.astimezone(utc).isoformat()
+                    try:
+                        date = datetime(year=year, month=month_number, day=day_number, hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone('America/Mexico_City'))
+                        date = date.astimezone(utc).isoformat()
+                    except ValueError:
+                        logger.error(f'value error: {day_number}/{month_number}/{year}')
+                        continue
 
                     style = day.get_attribute('style')
                     if 'linear' in style:
