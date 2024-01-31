@@ -62,7 +62,7 @@ class Stack(cdk.Stack):
                     'CALENDARS_BUCKET_NAME': calendars_bucket.bucket_name,
                 },
             ),
-            schedule=appscaling.Schedule.cron(hour='10', minute='0', week_day='1'),
+            schedule=appscaling.Schedule.cron(hour='10', minute='0', day='1'),
             subnet_selection=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PUBLIC),
         )
         
