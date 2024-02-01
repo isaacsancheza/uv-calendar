@@ -54,7 +54,7 @@ def create_calendar(events: list[EventDict]) -> bytes:
     for event_group in event_groups:
         if event_group['name'] == 'Descansos':
             continue
-        calendar_event = Event(name=f'📖 {event_group["name"]}', begin=event_group['begin'], end=event_group['end'])
+        calendar_event = Event(name=f'🏫 {event_group["name"]}', begin=event_group['begin'], end=event_group['end'])
         calendar_event.make_all_day() 
         calendar.events.add(calendar_event)
     return calendar.serialize().encode()
