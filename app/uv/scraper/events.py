@@ -180,14 +180,14 @@ def get_events(url: str) -> list:
                         {
                             'url': url,
                             'date': inicio,
-                            'name': 'Inicio clase',
+                            'name': 'Inicio clases',
                         }
                     )
                     entry['events'].append(
                         {
                             'url': url,
                             'date': fin,
-                            'name': 'Fin clase',
+                            'name': 'Fin clases',
                         }
                     )
             entries.append(entry)
