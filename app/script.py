@@ -29,7 +29,7 @@ calendars_bucket = s3.Bucket(environ['CALENDARS_BUCKET_NAME'])
 
 
 def get_dates(events: dict):
-    return [datetime.fromisoformat(event['date']) for event in events if 'Descansos' not in event['name']]
+    return [event['date'] for event in events if 'Descansos' not in event['name']]
 
 
 today = datetime.now(timezone('America/Mexico_City'))

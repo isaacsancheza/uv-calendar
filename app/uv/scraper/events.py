@@ -55,7 +55,7 @@ def get_events(url: str) -> list:
         # get days
         btn_group = chrome.find_element(By.XPATH, '//button[@id="btn_all"]/parent::div')
         buttons = btn_group.find_elements(By.XPATH, './button')
-        for i, btn in enumerate(buttons):
+        for i, btn in enumerate(buttons):            
             
             # ignore all calendar
             if i == len(buttons) - 1:
@@ -103,6 +103,7 @@ def get_events(url: str) -> list:
             last_month = None
             year_changed = False
 
+            inicio_fin_dates: set[datetime] = set()
             for month in months:
                 month_name = month.get_attribute('data-month')
                 month_number = MONTH_NAMES.index(month_name.strip().lower())
@@ -128,7 +129,6 @@ def get_events(url: str) -> list:
                     
                     try:
                         date = datetime(year=year, month=month_number, day=day_number, hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone('America/Mexico_City'))
-                        date = date.astimezone(utc).isoformat()
                     except ValueError:
                         logger.error(f'value error: {day_number}/{month_number}/{year}')
                         continue
@@ -141,9 +141,15 @@ def get_events(url: str) -> list:
                             if color.hex not in symbology:
                                 continue
 
+                            name = symbology.get(color.hex)
+                            if name == 'Fin clases':
+                                inicio_fin_dates.add(date)
+                                continue
+
                             entry['events'].append({
+                                'url': url,
                                 'date': date,
-                                'name': symbology.get(color.hex),
+                                'name': name,
                             })
                         continue
 
@@ -153,11 +159,37 @@ def get_events(url: str) -> list:
                         color = Color.from_string(color)
                         if color.hex not in symbology:
                             continue
-
-                        entry['events'].append({
-                            'date': date,
-                            'name': symbology.get(color.hex),
-                        })
+                        
+                        name = symbology.get(color.hex)
+                        if name == 'Fin clases':
+                            inicio_fin_dates.add(date)
+                            continue
+                        
+                        entry['events'].append(
+                            {
+                                'url': url,
+                                'date': date,
+                                'name': name,
+                            },
+                        )
+            if len(inicio_fin_dates) % 2 == 0:
+                sorted_dates = sorted(inicio_fin_dates)
+                for inicio, fin in [sorted_dates[i:i + 2] for i in range(0, len(sorted_dates), 2)]:
+                    print('inicio', inicio, 'fin', fin)
+                    entry['events'].append(
+                        {
+                            'url': url,
+                            'date': inicio,
+                            'name': 'Inicio clase',
+                        }
+                    )
+                    entry['events'].append(
+                        {
+                            'url': url,
+                            'date': fin,
+                            'name': 'Fin clase',
+                        }
+                    )
             entries.append(entry)
     finally:
         try:
