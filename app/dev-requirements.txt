@@ -1,0 +1,33 @@
+attrs==24.2.0             # via cattrs, jsii
+autopep8==2.3.1           # via -r dev-requirements.in
+aws-cdk-asset-awscli-v1==2.2.205  # via aws-cdk-lib
+aws-cdk-asset-kubectl-v20==2.1.2  # via aws-cdk-lib
+aws-cdk-asset-node-proxy-agent-v6==2.1.0  # via aws-cdk-lib
+aws-cdk-cloud-assembly-schema==38.0.1  # via aws-cdk-lib
+aws-cdk-lib==2.161.1      # via -r dev-requirements.in
+boto3==1.35.34            # via -r dev-requirements.in
+boto3-stubs==1.35.34      # via -r dev-requirements.in
+botocore==1.35.34         # via boto3, s3transfer
+botocore-stubs==1.35.34   # via boto3-stubs
+cattrs==23.2.3            # via jsii
+constructs==10.3.0        # via aws-cdk-lib
+importlib-resources==6.4.5  # via jsii
+iniconfig==2.0.0          # via pytest
+jmespath==1.0.1           # via boto3, botocore
+jsii==1.103.1             # via aws-cdk-asset-awscli-v1, aws-cdk-asset-kubectl-v20, aws-cdk-asset-node-proxy-agent-v6, aws-cdk-cloud-assembly-schema, aws-cdk-lib, constructs
+mypy==1.11.2              # via -r dev-requirements.in
+mypy-boto3-s3==1.35.32    # via boto3-stubs
+mypy-extensions==1.0.0    # via mypy
+packaging==24.1           # via pytest
+pluggy==1.5.0             # via pytest
+publication==0.0.3        # via aws-cdk-asset-awscli-v1, aws-cdk-asset-kubectl-v20, aws-cdk-asset-node-proxy-agent-v6, aws-cdk-cloud-assembly-schema, aws-cdk-lib, constructs, jsii
+pycodestyle==2.12.1       # via autopep8
+pytest==8.3.3             # via -r dev-requirements.in
+python-dateutil==2.9.0.post0  # via botocore, jsii
+s3transfer==0.10.2        # via boto3
+six==1.16.0               # via python-dateutil
+typeguard==2.13.3         # via aws-cdk-asset-awscli-v1, aws-cdk-asset-kubectl-v20, aws-cdk-asset-node-proxy-agent-v6, aws-cdk-cloud-assembly-schema, aws-cdk-lib, constructs, jsii
+types-awscrt==0.22.0      # via botocore-stubs
+types-s3transfer==0.10.2  # via boto3-stubs
+typing-extensions==4.12.2  # via jsii, mypy
+urllib3==2.2.3            # via botocore

@@ -1,9 +1,7 @@
 from os import environ
 
 import aws_cdk as cdk
-
 from stack import Stack
-
 
 region = environ['REGION']
 account = environ['ACCOUNT']
@@ -15,8 +13,8 @@ app = cdk.App()
 env = cdk.Environment(region=region, account=account)
 
 stack = Stack(
-    app, 
-    'Stack', 
+    app,
+    'Stack',
     env=env,
     region=region,
     account=account,
@@ -25,5 +23,5 @@ stack = Stack(
     calendars_bucket_name=calendars_bucket_name,
 )
 
-cdk.Tags.of(stack).add('stack-name', stack_name)
+cdk.Tags.of(stack).add('project', stack_name)
 app.synth()

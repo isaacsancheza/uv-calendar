@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import logging
-from os import environ
-from pytz import timezone
-from typing import Any
 from datetime import datetime
+from os import environ
+from typing import Any
 
 from boto3 import resource
+from pytz import timezone
 from requests import get
-
 from uv.ics import create_calendar
 from uv.scraper import get_events
 
@@ -24,7 +23,6 @@ logger = logging.getLogger('script')
 
 
 s3 = resource('s3')
-bucket = s3.Bucket(environ['BUCKET_NAME'])
 calendars_bucket = s3.Bucket(environ['CALENDARS_BUCKET_NAME'])
 
 
@@ -40,7 +38,7 @@ next_year_data: dict[str, dict[str, Any]] = {}
 current_year_data: dict[str, dict[str, Any]] = {}
 for year in [current_year, next_year]:
     logger.info(f'year: {year}')
-    
+
     # validate url exists
     sea_url = SEA.format(year=year)
     sea_response = get(sea_url)
@@ -52,17 +50,17 @@ for year in [current_year, next_year]:
 
         logger.info(f'spring events: {len(sea_spring["events"])}')
         logger.info(f'fall events: {len(sea_fall["events"])}')
-        
+
         if year == next_year:
             logger.info(f'{year} is next year')
-            
+
             next_year_data['sea'] = {
                 'fall': sea_fall,
                 'spring': sea_spring,
             }
         else:
             logger.info(f'{year} is current year')
-            
+
             current_year_data['sea'] = {
                 'fall': sea_fall,
                 'spring': sea_spring,
@@ -75,10 +73,10 @@ for year in [current_year, next_year]:
     escolarizado_response = get(escolarizado_url)
 
     logger.info(f'escolarizado url: {escolarizado_url}')
-    if escolarizado_response.ok:            
+    if escolarizado_response.ok:
         escolarizado = get_events(escolarizado_url)
         if len(escolarizado) == 4:
-            escolarizado_spring, escolarizado_fall, *_ = escolarizado    
+            escolarizado_spring, escolarizado_fall, *_ = escolarizado
         elif len(escolarizado) == 5:
             escolarizado_spring, escolarizado_fall, *_ = escolarizado
         else:
@@ -106,7 +104,7 @@ for year in [current_year, next_year]:
         logger.info('escolarizado url not found')
 
 # sea
-sea_spring_dates = get_dates(current_year_data['sea']['spring']['events']) 
+sea_spring_dates = get_dates(current_year_data['sea']['spring']['events'])
 sea_begin_spring = min(sea_spring_dates)
 sea_end_spring = max(sea_spring_dates)
 
@@ -119,33 +117,41 @@ if today < sea_begin_fall:
     logger.info('including spring plus fall events')
     events = current_year_data['sea']['spring']['events']
     events += current_year_data['sea']['fall']['events']
-    
+
     logger.info(f'events: {len(events)}')
 
     calendar = create_calendar(events)
     calendars_bucket.put_object(
-        Key='ics/sea/calendario.ics',
+        Key='calendarios/sea.ics',
         Body=calendar,
+        ContentType='text/calendar; charset=utf-8',
+        ContentDisposition='inline; filename="sea.ics"',
+        CacheControl='public, max-age=86400',
     )
 elif today >= sea_end_fall:
     logger.info('today is after sea_end_fall')
     logger.info('including fall events')
-   
+
     events = current_year_data['sea']['fall']['events']
     if next_year_data:
         logger.info('including next year spring events')
         events += next_year_data['sea']['spring']['events']
-    
+
     logger.info(f'events: {len(events)}')
-    
+
     calendar = create_calendar(events)
     calendars_bucket.put_object(
-        Key='ics/sea/calendario.ics',
+        Key='calendarios/sea.ics',
         Body=calendar,
+        ContentType='text/calendar; charset=utf-8',
+        ContentDisposition='inline; filename="sea.ics"',
+        CacheControl='public, max-age=86400',
     )
 
 # escolarizado
-escolarizado_spring_dates = get_dates(current_year_data['escolarizado']['spring']['events'])
+escolarizado_spring_dates = get_dates(
+    current_year_data['escolarizado']['spring']['events']
+)
 escolarizado_begin_spring = min(escolarizado_spring_dates)
 escolarizado_end_spring = max(escolarizado_spring_dates)
 
@@ -161,11 +167,14 @@ if today < escolarizado_begin_fall:
     events += current_year_data['escolarizado']['fall']['events']
 
     logger.info(f'events: {len(events)}')
-    
+
     calendar = create_calendar(events)
     calendars_bucket.put_object(
-        Key='ics/escolarizado/calendario.ics',
+        Key='calendarios/escolarizado.ics',
         Body=calendar,
+        ContentType='text/calendar; charset=utf-8',
+        ContentDisposition='inline; filename="escolarizado.ics"',
+        CacheControl='public, max-age=86400',
     )
 elif today > escolarizado_end_fall:
     logger.info('today is after escolarizado_end_fall')
@@ -175,11 +184,14 @@ elif today > escolarizado_end_fall:
     if next_year_data:
         logger.info('including next year spring events')
         events += next_year_data['escolarizado']['spring']['events']
-    
+
     logger.info(f'events: {len(events)}')
 
     calendar = create_calendar(events)
     calendars_bucket.put_object(
-        Key='ics/escolarizado/calendario.ics',
+        Key='calendarios/escolarizado.ics',
         Body=calendar,
+        ContentType='text/calendar; charset=utf-8',
+        ContentDisposition='inline; filename="escolarizado.ics"',
+        CacheControl='public, max-age=86400',
     )

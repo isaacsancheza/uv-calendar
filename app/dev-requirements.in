@@ -1,0 +1,6 @@
+mypy
+pytest
+autopep8
+aws-cdk-lib
+boto3
+boto3-stubs[s3]
